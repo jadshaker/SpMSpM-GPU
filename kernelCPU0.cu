@@ -30,24 +30,20 @@ void spmspm_cpu0(COOMatrix* cooMatrix1, CSRMatrix* csrMatrix1, CSCMatrix* cscMat
             // multiply these non-values together. The only pairs we 
             // will multiply are the ones that have matching row index and
             // column index.
-
-            // Starting indexes for matrix 1 row and 
-            // matrix 2 column
-            unsigned int rowIdx = rowStart;
-            unsigned int colIdx = colStart;
             
-            // Loop through the row of matrix 1 and the column of matrix 2
-            // until we reach the end of either of them
-            while (rowIdx < rowEnd && colIdx < colEnd) {
+            // Loop through the rows of matrix 1 and the columns of matrix 2
+            // until we pass through all of them
+            for(unsigned int rowIdx = rowStart; rowIdx<rowEnd; ++rowIdx){
                 unsigned int matrix1_cur_col = csrMatrix1->colIdxs[rowIdx];
-                unsigned int matrix2_cur_row = cscMatrix2->rowIdxs[colIdx];
 
-                if      (matrix1_cur_col < matrix2_cur_row)   {rowIdx++;} 
-                else if (matrix1_cur_col > matrix2_cur_row)   {colIdx++;} 
-                else {
-                    value += csrMatrix1->values[rowIdx] * cscMatrix2->values[colIdx];
-                    rowIdx++;
-                    colIdx++;
+                for(unsigned int colIdx= colStart; colIdx<colEnd; ++colIdx){
+                    unsigned int matrix2_cur_row = cscMatrix2->rowIdxs[colIdx];
+
+                    // If the column index of matrix 1 is equal to the row index of matrix 2
+                    // we can multiply the values together.
+                    if (matrix1_cur_col == matrix2_cur_row) {
+                        value += csrMatrix1->values[rowIdx] * cscMatrix2->values[colIdx];
+                    }
                 }
             }
 
