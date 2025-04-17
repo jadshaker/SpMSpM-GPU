@@ -7,10 +7,5 @@ void spmspm_cpu1(COOMatrix* cooMatrix1, CSRMatrix* csrMatrix1, CSCMatrix* cscMat
 
 
 
-
-
-
-
-
 }
 
