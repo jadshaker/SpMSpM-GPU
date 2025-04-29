@@ -108,7 +108,7 @@ __global__ void spmspm_kernel2(
     }
 }
 
-void spmspm_gpu1(COOMatrix* cooMatrix3_h,
+void spmspm_gpu2(COOMatrix* cooMatrix3_h,
                  CSRMatrix* csrMatrix1_d,
                  CSCMatrix*,
                  COOMatrix*,
