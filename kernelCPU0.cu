@@ -16,9 +16,9 @@ void spmspm_cpu0(COOMatrix *cooMatrix1,
         memset(row, 0, cooMatrix3->numCols * sizeof(float));
 
         unsigned int rowStart1 = csrMatrix1->rowPtrs[rowA];
-        unsigned int rowEnd2 = csrMatrix1->rowPtrs[rowA + 1];
+        unsigned int rowEnd1 = csrMatrix1->rowPtrs[rowA + 1];
 
-        for (unsigned int i = rowStart1; i < rowEnd2; ++i)
+        for (unsigned int i = rowStart1; i < rowEnd1; ++i)
         {
             float valA = csrMatrix1->values[i];
             unsigned int rowB = csrMatrix1->colIdxs[i];

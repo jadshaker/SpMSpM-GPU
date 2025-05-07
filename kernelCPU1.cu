@@ -11,12 +11,12 @@ void spmspm_cpu1(COOMatrix *cooMatrix1,
     // CSC * CSC implementation
     float *col = (float *)calloc(cooMatrix3->numRows, sizeof(float));
 
-    for (unsigned int colC = 0; colC < cscMatrix2->numCols; ++colC)
+    for (unsigned int colB = 0; colB < cscMatrix2->numCols; ++colB)
     {
         memset(col, 0, cooMatrix3->numRows * sizeof(float));
 
-        unsigned int colStart2 = cscMatrix2->colPtrs[colC];
-        unsigned int colEnd2 = cscMatrix2->colPtrs[colC + 1];
+        unsigned int colStart2 = cscMatrix2->colPtrs[colB];
+        unsigned int colEnd2 = cscMatrix2->colPtrs[colB + 1];
 
         for (unsigned int i = colStart2; i < colEnd2; ++i)
         {
@@ -39,7 +39,7 @@ void spmspm_cpu1(COOMatrix *cooMatrix1,
             if (col[rowIdx] != 0)
             {
                 cooMatrix3->rowIdxs[cooMatrix3->numNonzeros] = rowIdx;
-                cooMatrix3->colIdxs[cooMatrix3->numNonzeros] = colC;
+                cooMatrix3->colIdxs[cooMatrix3->numNonzeros] = colB;
                 cooMatrix3->values[cooMatrix3->numNonzeros] = col[rowIdx];
                 cooMatrix3->numNonzeros++;
             }
