@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define BLOCK_DIM 32
+#define BLOCK_DIM 64
 
 __global__ void spmspm_kernel5(COOMatrix *cooMatrix1,
                                CSRMatrix *csrMatrix1,
@@ -40,6 +40,7 @@ __global__ void spmspm_kernel5(COOMatrix *cooMatrix1,
             atomicAdd(&row[colB], valA * valB);
         }
     }
+    __syncthreads();
 
     for (int i = threadIdx.x; i < numCols2; i += blockDim.x)
     {
