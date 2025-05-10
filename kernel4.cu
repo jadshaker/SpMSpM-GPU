@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define BLOCK_DIM 32
+#define BLOCK_DIM 64
 
 __global__ void spmspm_kernel4(COOMatrix *cooMatrix1,
                                CSRMatrix *csrMatrix1,

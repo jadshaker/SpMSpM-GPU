@@ -16,9 +16,17 @@ __global__ void spmspm_kernel5(COOMatrix *cooMatrix1,
                                const unsigned int numNonzeros2)
 {
     extern __shared__ float row[];
+    __shared__ unsigned int nnz;
+
+    if (threadIdx.x == 0)
+    {
+        nnz = 0;
+    }
 
     for (int i = threadIdx.x; i < numCols2; i += blockDim.x)
+    {
         row[i] = 0;
+    }
     __syncthreads();
 
     unsigned int rowA = blockIdx.x;
@@ -37,20 +45,38 @@ __global__ void spmspm_kernel5(COOMatrix *cooMatrix1,
         {
             unsigned int colB = csrMatrix2->colIdxs[j];
             float valB = csrMatrix2->values[j];
-            atomicAdd(&row[colB], valA * valB);
+            float val = valA * valB;
+            if (val != 0.0f)
+            {
+                float oldVal = atomicAdd(&row[colB], val);
+                if (oldVal == 0.0f)
+                {
+                    atomicAdd(&nnz, 1);
+                }
+            }
         }
     }
     __syncthreads();
 
-    for (int i = threadIdx.x; i < numCols2; i += blockDim.x)
+    if (nnz != 0)
     {
-        float v = row[i];
-        if (v != 0.0f)
+        __shared__ unsigned int idx;
+        if (threadIdx.x == 0)
         {
-            unsigned int idx = atomicAdd(&cooMatrix3->numNonzeros, 1);
-            cooMatrix3->rowIdxs[idx] = rowA;
-            cooMatrix3->colIdxs[idx] = i;
-            cooMatrix3->values[idx] = v;
+            idx = atomicAdd(&cooMatrix3->numNonzeros, nnz);
+        }
+        __syncthreads();
+
+        for (int i = threadIdx.x; i < numCols2; i += blockDim.x)
+        {
+            float v = row[i];
+            if (v != 0.0f)
+            {
+                unsigned int index = atomicAdd(&idx, 1);
+                cooMatrix3->rowIdxs[index] = rowA;
+                cooMatrix3->colIdxs[index] = i;
+                cooMatrix3->values[index] = v;
+            }
         }
     }
 }
