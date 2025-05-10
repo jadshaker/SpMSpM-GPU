@@ -1,17 +1,7 @@
 #include "common.h"
-#include <stdio.h>
 
 #define BLOCK_DIM 64
 #define DS_DIM 5000
-
-__device__ __inline__ int atomic_push_to_coo(COOMatrix *cooMatrix, unsigned int &rowIdx, unsigned int &colIdx, float &val)
-{
-    unsigned int numNonzeros = atomicAdd(&cooMatrix->numNonzeros, 1);
-    cooMatrix->rowIdxs[numNonzeros] = rowIdx;
-    cooMatrix->colIdxs[numNonzeros] = colIdx;
-    cooMatrix->values[numNonzeros] = val;
-    return numNonzeros;
-}
 
 __global__ void spmspm_kernel6(COOMatrix *cooMatrix1, CSRMatrix *csrMatrix1, CSCMatrix *cscMatrix1, COOMatrix *cooMatrix2, CSRMatrix *csrMatrix2, CSCMatrix *cscMatrix2, COOMatrix *cooMatrix3, const unsigned int numRows1, const unsigned int numRows2, const unsigned int numCols2, const unsigned int numNonzeros1, const unsigned int numNonzeros2)
 {
